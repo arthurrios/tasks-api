@@ -39,6 +39,12 @@ export const routes = [
     path: buildRoutePath('/tasks/:id'),
     handler: (req, res) => {
       const { id } = req.params
+
+      const task = database.selectOne('tasks', id)
+
+      if (!task) {
+        return res.writeHead(404).end('Task not found')
+      }
       
       database.delete('tasks', id)
 
@@ -53,7 +59,6 @@ export const routes = [
       const { title, description } = req.body
 
       const { created_at, completed_at } = database.selectOne('tasks', id)
-      
       
       if (!title || !description) {
         return res.writeHead(400).end('Title and description are required')
