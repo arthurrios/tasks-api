@@ -1,1 +1,10 @@
-{}
+{
+  "tasks": [
+    {
+      "id": "7c47a8ac-323a-4737-a6e0-38754256c13b",
+      "title": "Nova tarefa",
+      "description": "Descrição da nova tarefa",
+      "completed_at": null
+    }
+  ]
+}
