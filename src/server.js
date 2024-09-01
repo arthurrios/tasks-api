@@ -1,7 +1,8 @@
 import http from 'node:http'
 import { json } from './middlewares/json.js'
+import { Database } from './database.js'
 
-const tasks = []
+const database = new Database()
 
 const server = http.createServer(async (req, res) => {
   const { method, url } = req
@@ -9,20 +10,22 @@ const server = http.createServer(async (req, res) => {
   await json(req, res)
 
   if (method === 'GET' && url === '/tasks') {
-    return res
-      .setHeader('Content-Type', 'application/json')
-      .end(JSON.stringify(tasks))
+    const tasks = database.select('tasks')
+
+    return res.end(JSON.stringify(tasks))
   }
 
   if (method === 'POST' && url === '/tasks') {
     const { title, description } = req.body
 
-    tasks.push({
+    const task = {
       id: 1,
       title,
       description,
       completed_at: null
-    })
+    }
+
+    database.insert('tasks', task)
 
     return res.writeHead(201).end()
   }
