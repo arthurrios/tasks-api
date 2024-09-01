@@ -25,6 +25,17 @@ export class Database {
     return data
   }
 
+  selectOne(table, id = null) {
+    const data = this.#database[table] ?? []
+  
+    if (id) {
+      return data.find(row => row.id === id)
+    }
+  
+    return data
+  }
+  
+
   insert(table, data) {
     if (Array.isArray(this.#database[table])) {
       this.#database[table].push(data)
@@ -33,6 +44,15 @@ export class Database {
     }
 
     this.#persist()
+  }
+
+  update(table, id, data) {
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+    if (rowIndex > -1) {
+      this.#database[table][rowIndex] = { id, ...data }
+      this.#persist()
+    }
   }
 
   delete(table, id) {
