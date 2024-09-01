@@ -25,6 +25,10 @@ export const routes = [
     handler: (req, res) => {
       const { title, description } = req.body
 
+      if (!title || !description) {
+        return res.writeHead(400).end('Title and description are required')
+      }
+
       const task = {
         id: randomUUID(),
         title,
@@ -64,6 +68,12 @@ export const routes = [
       const { title, description } = req.body
 
       const { created_at, completed_at } = database.selectOne('tasks', id)
+
+      const task = database.selectOne('tasks', id)
+
+      if (!task) {
+        return res.writeHead(404).end('Task not found')
+      }
       
       if (!title || !description) {
         return res.writeHead(400).end('Title and description are required')
@@ -86,10 +96,16 @@ export const routes = [
     handler: (req, res) => {
       const { id } = req.params
 
-      const { completed_at, id: taskId, ...task } = database.selectOne('tasks', id)
+      const task = database.selectOne('tasks', id)
+
+      if (!task) {
+        return res.writeHead(404).end('Task not found')
+      }
+
+      const { completed_at, id: taskId, ...rest } = task
       
       database.update('tasks', id, {
-        ...task,
+        ...rest,
         completed_at: completed_at ? null : new Date()
       })
 
